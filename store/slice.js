@@ -8,11 +8,12 @@ export const courseSlice = createSlice({
   reducers: {
    setVideos:(state,actions)=>{
         return actions.payload 
+   },
+   setLikes:(state,actions)=>{
+    return {...state,courseLikes:actions.payload}
    }
   },
 })
 
-
-export const { setVideos } = courseSlice.actions
-
+export const { setVideos,setLikes } = courseSlice.actions
 export default courseSlice.reducer

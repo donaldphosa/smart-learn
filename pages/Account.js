@@ -4,20 +4,14 @@ import React,{ useState } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker'
 import {signOut} from 'firebase/auth'
-import { auth, db, storage } from '../firebase/firebase.config';
+import { auth, storageRef} from '../firebase/firebase.config';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { updateDoc,profilePic, doc } from 'firebase/firestore';
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
-
 
 const Account = ({navigation}) => {
   const [image, setImage] = useState(null);
   const [visible,setVisible] = useState(false)
   const users = useSelector(state=>state.users)
-  console.log(storage);
   
 
   const logout = async() =>{
@@ -29,61 +23,48 @@ const Account = ({navigation}) => {
       setVisible(false)
     })
 }
-  
-// useEffect(()=>{
-//   if(image){
-//   upload()
-//   }
-// },[image])
+
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
 
     if (!result.cancelled) {
+      // setSubmit(!submit);
       setImage(result.uri);
-      
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function () {
+          reject(new TypeError("Network request failed!"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", result.uri, true);
+        xhr.send(null);
+      });
+      const ref = storageRef.child(new Date().toISOString());
+      const snapshot = (await ref.put(blob)).ref
+        .getDownloadURL()
+        .then((imageUrl) => {
+          //getting image link from storage
+          setImage(imageUrl);
+         
+          // setSubmit(false);
+        });
+    } else {
+      setImage(result.uri);
+      // setSubmit(false);
     }
-    console.log(result);
+
+   
   };
 
-  const uploadToFirebase = async ()=>{
-    const uploadUri = image;
-    const filename = uploadUri.substring(uploadUri.lastIndexOf('/')+1);
-    try{
-      await storage.ref(filename).putFile(uploadUri)
-    }catch(e){
-      console.log(e);
-    }
-  }
-
-  const upload = async ()=>{
-    if(image === null){
-        return
-    }else{
-        const imageRef = ref(storage,`images/${image.name}`)
-        await uploadBytes(imageRef,image).then((snapshot)=>{
-            getDownloadURL(snapshot.ref).then((url)=>{
-              update(url)    
-            })
-        })
-
-    }
-}
-
-const update = async (url) =>{
-  const newField = {profilePic: url}
-  const userDoc = doc(db,'users',users[0].id)
-   await updateDoc(userDoc,newField).then(()=>{
-       dispatch(profilePic(url)) 
-   }).catch((error)=>{
-   console.log(error);
-  })
-}
 
 
   return (

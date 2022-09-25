@@ -10,25 +10,71 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase.config';
 import { useDispatch } from 'react-redux';
 import { updateUsers } from '../store/userStore';
-
-
+import Spinner from 'react-native-loading-spinner-overlay/lib';
+import { useEffect } from 'react';
+import MediaMeta from 'react-native-media-meta'
 
 const CourseView = ({}) => {
     const dispatch = useDispatch()
     const users = useSelector(state=>state.users)
     const [vid,setVid] = useState('')
     const [purchase,setPurchase] = useState(false)
-    const [liked,setLiked] = useState(false)
     const videosData = useSelector(state => state.courses)
+    const [liked,setLiked] = useState(videosData.courseLikes.includes(users[0].email))
+    const [visible,setVisible] = useState(false)
+    const [likes,setLikes] = useState(videosData.courseLikes)
+
+    useEffect(()=>{
+            setLiked(videosData.courseLikes.includes(users[0].email))
+    },[likes])
+    const duration = async ()=>{
+       MediaMeta.get(videosData.courseVideos[0].vidUrl)
+       .then((metadata)=>console.log(metadata))
+       .catch(e=>console.log(e))
+    }
+    duration()
+
+const likeCourse = ()=>{
+    console.log(liked);
+    if(!liked){
+        love()
+    }else if(liked){
+         dislike()
+    }
+}
+const love = async()=>{
+    const newField ={courseLikes:[ ...new Set([...likes,users[0].email])]}
+    const courseDoc = doc(db,'courses',videosData.identifier)
+    await updateDoc(courseDoc,newField).then(()=>{
+        // dispatch(setLikes([ ...new Set([...likes,users[0].email])]))
+        setLiked(true)
+    }).catch(e=>console.log(e))
+}
+
+const dislike = async()=>{
+    const newField = {courseLikes:likes.filter((like)=>{
+        return users[0].email !== like
+    })}
+    const courseDoc = doc(db,'courses',videosData.identifier)
+    await updateDoc(courseDoc,newField).then(()=>{
+        // dispatch(setLikes(payload))
+        setLiked(false)
+    }).catch((e)=>{
+        console.log(e);
+    }) 
+}
 
     const update = async () =>{
+        setVisible(true)
        const newField = {coursesEnrolledIds: [...users[0].coursesEnrolledIds,videosData.id?.toString()]}
        const userDoc = doc(db,'users',users[0].id)
         await updateDoc(userDoc,newField).then(()=>{
             setPurchase(true)
-            dispatch(updateUsers(videosData.id?.toString())) 
+            dispatch(updateUsers(videosData.id?.toString()))
+            setVisible(false) 
         }).catch((error)=>{
         console.log(error);
+        setVisible(false)
        })
     }
 
@@ -41,8 +87,10 @@ const CourseView = ({}) => {
     <SafeAreaProvider>
         <SafeAreaView>
             <View style={styles.container}>
+            <Spinner visible={visible} />
              <View style={styles.upperPart}>
            {  vid?  <Video
+
                         style={styles.video}
                         source={{uri:vid}}
                         resizeMode="contain"
@@ -80,7 +128,9 @@ const CourseView = ({}) => {
                         </ScrollView>
                     </View>
                     <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                        <Pressable onPress={()=>setLiked(prev=>!prev)} style={styles.favorate}>
+                        <Pressable onPress={()=>{
+                            likeCourse()
+                        }} style={styles.favorate}>
                             <Ionicons name={liked?'star':'star-outline'} color={'#FF6905'} size={18}/>
                         </Pressable>
                         <Pressable disabled={users[0].coursesEnrolledIds?.includes(videosData.id?.toString())} onPress={()=>{

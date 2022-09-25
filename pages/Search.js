@@ -1,16 +1,15 @@
 import { Pressable, StyleSheet, Text, View, Image, TextInput, ScrollView } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import React from 'react'
+import React, { useEffect } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { FlatGrid } from 'react-native-super-grid';
 import { useState } from 'react';
-import RangeSlider, { Slider } from 'react-native-range-slider-expo';
+import { useDispatch } from 'react-redux';
+import { setVideos } from '../store/slice';
+import SelectDropdown from 'react-native-select-dropdown'
 
-
-
-
-const Search = ({navigation}) => {
-  const [data,setData] = useState([{category:'Design',status:true},{category:'Painting',status:true},{category:'Coding',status:false},{category:'Music',status:false},{category:'Visual identity',status:false},{category:'Mathematics',status:false}])
+const Search = ({navigation,courseData}) => {
+  const [data,setData] = useState([{category:'Design',status:false},{category:'Painting',status:false},{category:'Coding',status:false},{category:'Music',status:false},{category:'Visual identity',status:false},{category:'Mathematics',status:false}])
   const [duration,setDuration] = useState([
     {time:'3-8',status:true},
     {time:'8-14',status:true},
@@ -20,10 +19,48 @@ const Search = ({navigation}) => {
    ])
    const [filter,setFilter] = useState(false)
   const [initial,setInitial] = useState(100)
-  const [toValue,setToValue] = useState(2000)
+  const [toValue,setToValue] = useState(1000)
+  const [selectedCat,setSelectedCat]= useState([])
+  const [results,setResults] = useState([])
+  const [info,setInfo] = useState(courseData)
+const options = [100,500,1000,1500,2000,2500,3000]
+const optionsData = ['R 500','R 1000','R 1500','R 2000','R 2500','R3000']
+
+useEffect(()=>{ 
+  getCategories()
+  console.log(selectedCat);
+return ()=>{
+  getCategories()
+}
+},[data])
+
+
+const getCategories = ()=>{
+  const temp = []
+  for(let i = 0;i<data.length;i++){
+    if(data[i].status === true){
+      temp.push(data[i].category)
+    }
+  }
+  setSelectedCat(temp)
+}
+
+const filterCourses = (cat) =>{
+  let filteredData1 = info.filter((item)=>{
+    if(cat.length===0){
+      return true
+    }
+    return cat.includes(item.category)
+  })
+  let filteredData2 = filteredData1.filter((info)=>{
+    return info.coursePrice >= initial&&info.coursePrice <= toValue
+  })
+  setResults(filteredData2);
+}
+
   if(filter){
     return(
-      <Results navigation={navigation} setFilter={setFilter}/>
+      <Results results={results} navigation={navigation} setFilter={setFilter}/>
     );
   }
   return (
@@ -34,7 +71,7 @@ const Search = ({navigation}) => {
           <View style={styles.content}>
             <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.header}>
-              <Pressable onPress={()=>setFilter(true)}>
+              <Pressable onPress={()=>navigation.goBack()}>
                 <Ionicons name="close" size={24} color="#1F1F39" /> 
               </Pressable>
               <Text style={{fontSize:18,fontWeight:'bold',color:'#1F1F39'}}>Search Filter</Text>
@@ -55,22 +92,54 @@ const Search = ({navigation}) => {
                     </View></Pressable>)}
                 />
             <View>
-           
                 </View>
                 <View>
-                  <Text style={{color:'#1F1F39',fontSize:16,fontWeight:'700'}}>Price</Text>
-                  <View style={{flexDirection: 'row'}}>
-                      <RangeSlider min={0} max={3000}
-                            fromValueOnChange={(value)=>{setInitial(value)}}
-                            toValueOnChange={(value)=>{setToValue(value)}}
-                            initialFromValue={initial}
-                            initialToValue={toValue}
-                            step={100}
-                            barHeight={5}
-                            inRangeBarColor={'#3D5CFF'}
-                            knobSize={15}
-                        /> 
-                          </View>
+                  <Text style={{color:'#1F1F39',fontSize:16,fontWeight:'700'}}>Price Range</Text>
+                  <View style={{flexDirection: 'row',width:'100%',alignItems:'center'}}>
+                  <SelectDropdown
+                    data={options}
+                    
+                    buttonStyle={{
+                      width:140,
+                      height:30,
+                      marginVertical:15,
+                      marginLeft:10
+                    }}
+                  buttonTextStyle={{
+                    fontSize:14,
+                    color:'gray'
+                  }}
+                  onSelect={(selectedItem,index)=>{
+                      setInitial(selectedItem)
+                  }}
+                  defaultValue={initial}
+                  rowTextForSelection={(item,index)=>{
+                    return optionsData[index]
+                  }}
+                  />
+                  <Text>to</Text>
+                  <SelectDropdown
+                    data={options}
+                    buttonStyle={{
+                      width:150,
+                      height:30,
+                      marginVertical:15,
+                      marginRight:10
+                    }}
+                  buttonTextStyle={{
+                    fontSize:14,
+                    color:'gray'
+                  }}
+                  onSelect={(selectedItem,index)=>{
+                    setToValue(selectedItem)
+                }}
+                defaultValue={toValue}
+                rowTextForSelection={(item,index)=>{
+                    
+                  return optionsData[index]
+                }}
+                  />
+                  </View>
                       <Text style={{color:'#1F1F39',fontSize:16,fontWeight:'700'}}>Duration</Text>
                       <FlatGrid
                   itemDimension={80}
@@ -89,7 +158,10 @@ const Search = ({navigation}) => {
                   <Pressable onPress={()=>setFilter(true)} style={styles.clearBtn}>
                     <Text style={{color:'#3D5CFF',fontSize:16,fontWeight:'700'}}>Clear</Text>
                   </Pressable>
-                  <Pressable onPress={()=>setFilter(true)} style={styles.applyBtn}>
+                  <Pressable onPress={()=>{
+                      filterCourses(selectedCat)
+                      setFilter(true)
+                    }} style={styles.applyBtn}>
                     <Text style={{color:'#ffffff',fontSize:16,fontWeight:'700'}}>Apply Filter</Text>
                   </Pressable>
                 </View>
@@ -106,8 +178,8 @@ const Search = ({navigation}) => {
 export default Search
 
 
-const Results = ({setFilter,navigation}) =>{
-  const [data,setData] = useState([{category:'Design',status:true},{category:'Painting',status:true},{category:'Coding',status:false},{category:'Music',status:false}])
+const Results = ({setFilter,navigation,results}) =>{
+
   return (
   <SafeAreaProvider>
     <SafeAreaView>
@@ -122,28 +194,12 @@ const Results = ({setFilter,navigation}) =>{
           </View>
           <Text style={{color:'#1F1F39',fontSize:18,fontWeight:'600',marginVertical:18}}>Results</Text>
           <View style={styles.filters}>
-          <FlatGrid
-                  itemDimension={60}
-                  data={data}
-                  renderItem={({ item }) => (<Pressable onPress={()=>{
-                    
-                    setData(data.map((dat)=>{
-                      return dat.category === item.category?{...dat,status:!dat.status}:dat
-                    }))
-                    return
-                  }}><View style={[styles.category,item.status?{backgroundColor:'#3D5CFF'}:{}]}>
-                    <Text style={{color: item.status?'#ffffff':'#858597',fontSize:12}}>{item.category}</Text>
-                    </View></Pressable>)}
-                />
             </View> 
           <View style={{height:'60%',marginTop:10}}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Courses navigation={navigation}/>
-            <Courses navigation={navigation}/>
-            <Courses navigation={navigation}/>
-            <Courses navigation={navigation}/>
-            <Courses navigation={navigation}/>
-            <Courses navigation={navigation}/>
+            {
+              results.map((result, index)=> <Courses key={index} {...result} navigation={navigation}/>)
+            }
           </ScrollView>
         </View>       
         </View>
@@ -152,20 +208,24 @@ const Results = ({setFilter,navigation}) =>{
   )
 }
 
-const Courses = ({navigation}) =>{
+const Courses = ({courseName,coursePic,coursePrice,courseWriter,navigation,courseVideos,id,courseLikes,identifier}) =>{
+  const dispatch = useDispatch()
   return(
-    <Pressable onPress={()=>{navigation.navigate('CourseView')}} style={styles.CourseContainer}>
+    <Pressable onPress={()=>{
+      dispatch(setVideos({courseName, courseVideos,coursePrice,id,courseLikes,identifier}));
+      navigation.navigate('CourseView')
+    }} style={styles.CourseContainer}>
       <View style={styles.imageContainer}>
-        <Image resizeMode='cover' style={styles.image} source={{uri:'https://th.bing.com/th/id/OIP.voawJ6Ch_K82x42SBSmJQQHaHb?pid=ImgDet&w=150&h=151&c=7'}}/>
+        <Image resizeMode='cover' style={styles.image} source={{uri:coursePic}}/>
       </View>
         <View style={styles.courseDetails}>
-          <Text style={{color:'#1F1F39',fontSize:14,fontWeight:'700'}}>React v.16.0.5</Text>
+          <Text style={{color:'#1F1F39',fontSize:14,fontWeight:'700'}}>{courseName}</Text>
           <View style={styles.writer}>
           <Ionicons name="person" size={12} color="#B8B8D2" />
-          <Text style={{color:'#B8B8D2',fontSize:14,fontWeight:'400',marginLeft:3}}>Shake Spear</Text>
+          <Text style={{color:'#B8B8D2',fontSize:14,fontWeight:'400',marginLeft:3}}>{courseWriter}</Text>
           </View>
           <View style={styles.priceContainer}>
-            <Text style={{color:'#3D5CFF',fontSize:16,fontWeight:'bold'}}>$190</Text>
+            <Text style={{color:'#3D5CFF',fontSize:16,fontWeight:'bold'}}>${coursePrice}</Text>
             <Text style={{backgroundColor:'#FFEBF0',color:'#FF6905',fontSize:14,marginLeft:5,padding:2,borderRadius:20}}>16 hours</Text>
           </View>
         </View>
@@ -173,7 +233,6 @@ const Courses = ({navigation}) =>{
     </Pressable>
   );
 }
-
 const styles = StyleSheet.create({
   container:{
     width:'100%',

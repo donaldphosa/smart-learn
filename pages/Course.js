@@ -4,12 +4,11 @@ import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
-import data from '../data'
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setVideos } from '../store/slice';
 
-const Course = ({navigation}) => {
+const Course = ({navigation,data}) => {
   const [enrolledCourse,setEnrolledCourses] = useState([])
   const [progress,setProgress] = useState(80)
   const users = useSelector(state=>state.users)
@@ -53,9 +52,9 @@ const NoEnrolledCourseModel = () =>{
   </View>
 }
 
-const PlanContainer = ({ progress,courseName,courseVideos,coursePrice,dispatch,navigation,id})=>{
+const PlanContainer = ({ progress,courseName,courseVideos,coursePrice,dispatch,navigation,id,courseLikes,identifier})=>{
   return<Pressable onPress={()=>{  
-    dispatch(setVideos({courseName, courseVideos,coursePrice,id}));
+    dispatch(setVideos({courseName, courseVideos,coursePrice,id,courseLikes,identifier}));
     navigation.navigate('CourseView')
   }}>
       <View style={styles.wrapper}>

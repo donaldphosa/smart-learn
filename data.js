@@ -22,7 +22,8 @@ const courseData = [
         courseLikes:[],
         coursePrice:120,
         coursePic:'https://th.bing.com/th/id/OIP.voawJ6Ch_K82x42SBSmJQQHaHb?pid=ImgDet&w=150&h=151&c=7',
-        courseWriter:'Dr D phosa'
+        courseWriter:'Dr D phosa',
+        category:'Coding'
     },
     {
         id:2,
@@ -47,7 +48,8 @@ const courseData = [
         courseLikes:[],
         coursePrice:2000,
         coursePic:'https://th.bing.com/th/id/OIP.voawJ6Ch_K82x42SBSmJQQHaHb?pid=ImgDet&w=150&h=151&c=7',
-        courseWriter:'Dr m phosa'
+        courseWriter:'Dr m phosa',
+        category:'Design'
     },
     {
         id:3,
@@ -72,7 +74,8 @@ const courseData = [
         courseLikes:[],
         coursePrice:1200,
         coursePic:'https://th.bing.com/th/id/OIP.voawJ6Ch_K82x42SBSmJQQHaHb?pid=ImgDet&w=150&h=151&c=7',
-        courseWriter:'Dr D phosa'
+        courseWriter:'Dr D phosa',
+        category:'Mathematics'
     }
 ]
 

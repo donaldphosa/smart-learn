@@ -30,6 +30,7 @@ const Splash = ({navigation}) => {
   } 
   },[user])
 
+
   const getDocuments = async ()=>{
     const documents =await getDocs(userRef).catch((error)=>{
         Alert.alert(error)
@@ -40,7 +41,7 @@ const Splash = ({navigation}) => {
     const instance = list.filter((item)=>{
       return item?.email.toLowerCase() === user?.email.toLowerCase() 
     })
-    console.log(instance);
+  
     dispatch(getUser(instance))
     return instance
   }

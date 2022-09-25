@@ -2,16 +2,16 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Pressable,
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
-import data from '../data'
+// import data from '../data'
 import { useDispatch, useSelector } from 'react-redux';
 import { setVideos } from '../store/slice';
 
 
-
-const Home = ({navigation}) => {
+const Home = ({navigation,data}) => {
   const [index,setIndex]=useState(1)
   const dispatch = useDispatch()
   const users = useSelector(state=>state.users)
+
   return (
 <SafeAreaProvider>
     <SafeAreaView>
@@ -59,7 +59,7 @@ const Home = ({navigation}) => {
 
             <View style={{height:'60%',marginTop:10}}>
             {
-              data?.map((course,index)=>{
+              data.map((course,index)=>{
                 return <Courses dispatch={dispatch} navigation={navigation} key={index} {...course} />
               })
             }
@@ -90,11 +90,11 @@ const Card = ()=>{
   );
 }
 
-const Courses = ({courseName,coursePic,dispatch,coursePrice,courseWriter,navigation,courseVideos,id}) =>{
+const Courses = ({courseName,coursePic,dispatch,coursePrice,courseWriter,navigation,courseVideos,id,courseLikes,identifier}) =>{
   return(
     <Pressable onPress={()=>{
       
-      dispatch(setVideos({courseName, courseVideos,coursePrice,id}));
+      dispatch(setVideos({courseName, courseVideos,coursePrice,id,courseLikes,identifier}));
       navigation.navigate('CourseView')
     }} style={styles.CourseContainer}>
       <View style={styles.imageContainer}>
