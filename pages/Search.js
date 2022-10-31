@@ -28,7 +28,6 @@ const optionsData = ['R 500','R 1000','R 1500','R 2000','R 2500','R3000']
 
 useEffect(()=>{ 
   getCategories()
-  console.log(selectedCat);
 return ()=>{
   getCategories()
 }

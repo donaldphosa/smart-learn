@@ -64,19 +64,19 @@ const dislike = async()=>{
     }) 
 }
 
-    const update = async () =>{
-        setVisible(true)
-       const newField = {coursesEnrolledIds: [...users[0].coursesEnrolledIds,videosData.id?.toString()]}
-       const userDoc = doc(db,'users',users[0].id)
-        await updateDoc(userDoc,newField).then(()=>{
-            setPurchase(true)
-            dispatch(updateUsers(videosData.id?.toString()))
-            setVisible(false) 
-        }).catch((error)=>{
-        console.log(error);
-        setVisible(false)
-       })
-    }
+const update = async () =>{
+    setVisible(true)
+    const newField = {coursesEnrolledIds: [...users[0].coursesEnrolledIds,videosData.id?.toString()]}
+    const userDoc = doc(db,'users',users[0].id)
+    await updateDoc(userDoc,newField).then(()=>{
+        setPurchase(true)
+        dispatch(updateUsers(videosData.id?.toString()))
+        setVisible(false) 
+    }).catch((error)=>{
+    console.log(error);
+    setVisible(false)
+    })
+}
 
     if(purchase){
         return(

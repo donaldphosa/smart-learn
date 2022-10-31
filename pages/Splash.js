@@ -3,14 +3,22 @@ import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { onAuthStateChanged } from 'firebase/auth'
 import { useEffect } from 'react';
-import { auth, db } from '../firebase/firebase.config';
+import { app, auth, db } from '../firebase/firebase.config';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getUser } from '../store/userStore';
 import { collection, getDocs } from 'firebase/firestore';
+import {
+  getDatabase,
+  get,
+  ref,
+  set,
+  onValue,
+  push,
+  update,
+} from 'firebase/database';
 
 const Splash = ({navigation}) => {
-
     const [user,setUser] = useState()
     const userRef = collection(db,'users')
     const dispatch = useDispatch()
@@ -41,7 +49,7 @@ const Splash = ({navigation}) => {
     const instance = list.filter((item)=>{
       return item?.email.toLowerCase() === user?.email.toLowerCase() 
     })
-  
+ 
     dispatch(getUser(instance))
     return instance
   }

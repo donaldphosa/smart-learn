@@ -1,4 +1,4 @@
-import React, { useState, createContext, useLayoutEffect } from 'react';
+import React from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
 import  {createNativeStackNavigator}  from '@react-navigation/native-stack';
@@ -12,10 +12,14 @@ import NotificationView from './pages/NotificationView';
 import Splash from './pages/Splash';
 import { Provider } from 'react-redux'
 import { store } from './store/store'
+import FindFriends from './pages/FindFriends';
+import { useState } from 'react';
 
 
 export default function App() {
   const Stack = createNativeStackNavigator();
+  const [message,setMessages] = useState([])
+  const [chatId,setChatId] = useState()
 
   return (
     <Provider store={store}>
@@ -34,13 +38,16 @@ export default function App() {
             {({navigation})=><Login navigation={navigation}/>}
           </Stack.Screen>
           <Stack.Screen name='Tabs'>
-            {({navigation})=><Tabs navigation={navigation}/>}
+            {({navigation})=><Tabs setChatId={setChatId} setMessages={setMessages} navigation={navigation}/>}
           </Stack.Screen>
           <Stack.Screen name='CourseView'>
             {({navigation})=><CourseView  navigation={navigation}/>}
           </Stack.Screen>
           <Stack.Screen name='NotificationView'>
-            {({navigation})=><NotificationView  navigation={navigation}/>}
+            {({navigation})=><NotificationView chatId={chatId} message={message} navigation={navigation}/>}
+          </Stack.Screen>
+          <Stack.Screen name='FindFriends'>
+            {({navigation})=><FindFriends  navigation={navigation}/>}
           </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>

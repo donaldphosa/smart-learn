@@ -12,7 +12,7 @@ import { db } from '../firebase/firebase.config';
 
 
 
-const Tabs = ({navigation}) => {
+const Tabs = ({navigation,setMessages,setChatId}) => {
   const users = useSelector(state=>state.users)
   const [focused,setFocused] = useState('home')
 
@@ -49,7 +49,7 @@ setData(list)
         focused==='search'&&<Search courseData={data} navigation={navigation}/>
       }
       {
-        focused==='message'&&<Message navigation={navigation}/>
+        focused==='message'&&<Message setChatId={setChatId} setMessages={setMessages} navigation={navigation}/>
       }
       {
          focused==='account'&&<Account navigation={navigation}/>
