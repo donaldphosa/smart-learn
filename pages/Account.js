@@ -10,60 +10,50 @@ import { useSelector } from 'react-redux';
 
 const Account = ({navigation}) => {
   const [image, setImage] = useState(null);
-  const [visible,setVisible] = useState(false)
-  const users = useSelector(state=>state.users)
+  const [visible,setVisible] = useState(false);
   
 
-  const logout = async() =>{
-    setVisible(true)
-    await signOut(auth).then(()=>{
-      navigation.navigate('Login')
-      setVisible(false)
-    }).catch(()=>{
-      setVisible(false)
-    })
-}
 
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+  // const pickImage = async () => {
+  //   const result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
+  //     allowsEditing: true,
+  //     aspect: [4, 3],
+  //     quality: 1,
+  //   });
 
-    if (!result.cancelled) {
-      // setSubmit(!submit);
-      setImage(result.uri);
-      const blob = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.onload = function () {
-          resolve(xhr.response);
-        };
-        xhr.onerror = function () {
-          reject(new TypeError("Network request failed!"));
-        };
-        xhr.responseType = "blob";
-        xhr.open("GET", result.uri, true);
-        xhr.send(null);
-      });
-      const ref = storageRef.child(new Date().toISOString());
-      const snapshot = (await ref.put(blob)).ref
-        .getDownloadURL()
-        .then((imageUrl) => {
-          //getting image link from storage
-          setImage(imageUrl);
+  //   if (!result.cancelled) {
+  //     // setSubmit(!submit);
+  //     setImage(result.uri);
+  //     const blob = await new Promise((resolve, reject) => {
+  //       const xhr = new XMLHttpRequest();
+  //       xhr.onload = function () {
+  //         resolve(xhr.response);
+  //       };
+  //       xhr.onerror = function () {
+  //         reject(new TypeError("Network request failed!"));
+  //       };
+  //       xhr.responseType = "blob";
+  //       xhr.open("GET", result.uri, true);
+  //       xhr.send(null);
+  //     });
+  //     const ref = storageRef.child(new Date().toISOString());
+  //     const snapshot = (await ref.put(blob)).ref
+  //       .getDownloadURL()
+  //       .then((imageUrl) => {
+  //         //getting image link from storage
+  //         setImage(imageUrl);
          
-          // setSubmit(false);
-        });
-    } else {
-      setImage(result.uri);
-      // setSubmit(false);
-    }
+  //         // setSubmit(false);
+  //       });
+  //   } else {
+  //     setImage(result.uri);
+  //     // setSubmit(false);
+  //   }
 
    
-  };
+  // };
 
 
 
@@ -75,7 +65,7 @@ const Account = ({navigation}) => {
           <Text style={{color:'#1F1F39',fontWeight:'bold',fontSize:24}}>Account</Text>
           <View style={styles.imageContainer}>
             <Image style={styles.image} source={image?{uri:image}:require('../assets/images/avater.png')}/>
-            <Pressable onPress={()=>pickImage()} style={styles.camera}>
+            <Pressable onPress={()=>{}} style={styles.camera}>
               <Ionicons name='camera' size={24} color='#fff'/>
             </Pressable>
           </View>
@@ -95,7 +85,7 @@ const Account = ({navigation}) => {
               <Text style={styles.settingText}>Help</Text>
               <Ionicons name='help' size={18} color='#1F1F39'/>
             </Pressable>
-            <Pressable onPress={logout} style={styles.setting}>
+            <Pressable onPress={()=>{}} style={styles.setting}>
               <Text style={styles.settingText}>Log Out</Text>
               <Ionicons name='log-out-outline' size={18} color='#1F1F39'/>
             </Pressable>

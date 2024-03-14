@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable, ScrollView, Alert, TextInput } from 'react-native'
+import { View, Text, StyleSheet, Pressable, ScrollView, Alert, TextInput, ToastAndroid } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -6,57 +6,84 @@ import CheckBox from 'react-native-check-box'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { app, auth, db } from '../firebase/firebase.config'
 import Spinner from 'react-native-loading-spinner-overlay';
-import { collection, addDoc } from 'firebase/firestore'
-import { getDatabase, set, ref } from 'firebase/database';
-
+import { doc, setDoc, onSnapshot  } from "firebase/firestore"; 
+import { useDispatch } from 'react-redux';
+import { setUser } from '../store/authReducer';
 
 const SignUp = ( { navigation } ) =>
 {
     const [ checked, setChecked ] = useState( true )
-    const [ Email, setEmail ] = useState( '' )
-    const [ Password, setPassword ] = useState( '' )
+    const [ email, setEmail ] = useState( '' )
+    const [ password, setPassword ] = useState( '' )
     const [ name, setName ] = useState( '' )
     const [ visible, setVisible ] = useState( false )
     const [ nameError, setNameError ] = useState( false )
     const [ done, setDone ] = useState( false )
-    const userRef = collection( db, "users" );
 
-    var format = /^[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/;
+    const dispatch = useDispatch();
 
-    const createAccount = async () =>
-    {
-        setVisible( true )
-        createUserWithEmailAndPassword( auth, Email, Password ).then( ( user ) =>
-        {
-            const database = getDatabase( app )
-            set( ref( database, `chats/${ name }` ), {
-                name: name,
-                email: Email,
-                id: user.user.uid,
-                friendsList: [],
-            } )
-            addDoc( userRef, {
-                name: name,
-                email: Email,
-                id: user.user.uid,
-                coursesEnrolledIds: []
-            } )
-                .catch( ( error ) =>
-                {
-                    Alert.alert( error.message )
-                } )
-            setDone( true )
-            setVisible( false )
-        } ).catch( ( error ) =>
-        {
-            Alert.alert( error.message )
-            setVisible( false )
-        } )
+    function validatePassword(password) {
+        // Password should be at least 8 characters long
+        if (password.length < 8) {
+            ToastAndroid.show("Password should be at least 8 characters long",ToastAndroid['SHORT'])
+            return false;
+        }
+    
+        // Password should contain at least one lowercase letter
+        if (!/[a-z]/.test(password)) {
+            ToastAndroid.show("Password should contain at least one lowercase letter",ToastAndroid['SHORT'])
+            return false;
+        }
+    
+        // Password should contain at least one uppercase letter
+        if (!/[A-Z]/.test(password)) {
+            ToastAndroid.show("Password should contain at least one uppercase letter",ToastAndroid['SHORT'])
+            return false;
+        }
+    
+        // Password should contain at least one digit
+        if (!/\d/.test(password)) {
+            ToastAndroid.show("Password should contain at least one digit",ToastAndroid['SHORT'])
+            return false;
+        }
+    
+        // Password should contain at least one special character
+        if (!/[^a-zA-Z0-9]/.test(password)) {
+            ToastAndroid.show("Password should contain at least one special character",ToastAndroid['SHORT'])
+            return false;
+        }
+    
+        // If all conditions are satisfied, return true
+        return true;
     }
+    
+ 
+    
 
-    if ( done )
-    {
-        return <Model setDone={setDone} navigation={navigation} />
+    const signup = async ()=>{
+        if (!validatePassword(password)) {
+           return;
+        }
+        setVisible(true)
+        createUserWithEmailAndPassword(auth,email,password).then(async(userCredential)=>{
+            await setDoc(doc(db, "users", userCredential.user.email), {
+                name: name,
+                email: email,
+                EnrolledCourses: []
+              });
+
+              const unsub = onSnapshot(doc(db, "users", userCredential.user.email), (doc) => {
+                
+                doc.data()
+                dispatch(setUser(doc.data()));
+
+              });
+
+              setVisible(false)
+        }).catch((error)=>{
+            Alert.alert(error.message);
+            setVisible(false)
+        })
     }
 
     return (
@@ -109,18 +136,9 @@ const SignUp = ( { navigation } ) =>
                             </View>
                             <Pressable onPress={() =>
                             {
-                                if ( name && checked )
-                                {
-                                    if(name.match(format)){
-                                        Alert.alert('name should not contain special charecters')
-                                        return
-                                    }else{
-                                        createAccount()
-                                    }
-                                } else if ( !name )
-                                {
-                                    setNameError( true )
-                                }
+
+                                signup();
+                            //    navigation.navigate("Tabs")
                             }
                             } style={styles.button}>
                                 <Text style={{ fontSize: 16, fontWeight: '500' }}>Create account</Text>
@@ -142,6 +160,7 @@ const SignUp = ( { navigation } ) =>
                                 </Pressable>
                             </Text>
                         </View>
+                    
                     </ScrollView>
                 </View>
             </SafeAreaView>
@@ -164,7 +183,6 @@ const Model = ( { setDone, navigation } ) =>
                 <Pressable onPress={() =>
                 {
                     navigation.navigate( 'Tabs' )
-                    setTimeout( () => { setDone( false ) }, 1000 )
                 }} style={styles.doneButton}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600' }}>Done</Text>
                 </Pressable>

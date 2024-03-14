@@ -3,27 +3,34 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import React from 'react'
-import { auth } from '../firebase/firebase.config';
+import { auth, db } from '../firebase/firebase.config';
 import { useState } from 'react';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
+import { useDispatch } from 'react-redux';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { setUser } from '../store/authReducer';
 
 const Login = ({navigation}) => {
-  const [Email,setEmail] = useState('')
-  const [Password,setPassword] = useState('')
+  const [email,setEmail] = useState('')
+  const [password,setPassword] = useState('')
   const [secure,setSecure] = useState(true)
   const [visible,setVisible] = useState(false)
-  const login = async () =>{
-    setVisible(true)
-    signInWithEmailAndPassword(auth,Email,Password).then(()=>{ 
-      navigation.navigate('Tabs') 
-      setVisible(false)
-    }).catch((error)=>{
-      Alert.alert(error.message)
-      setVisible(false)
-    })
-   
-  }
-
+  const dispatch = useDispatch();
+  
+  
+const login = async()=>{
+  setVisible(true)
+  await signInWithEmailAndPassword(auth,email,password).then((user)=>{
+    const unsub = onSnapshot(doc(db, "users", user.user.email), (doc) => {          
+    doc.data()
+    dispatch(setUser(doc.data()));
+    setVisible(false)
+  });
+  }).catch((error)=>{
+    console.log(error.message);
+    setVisible(false)
+  })
+}
   return (
     <SafeAreaProvider>
       <SafeAreaView>
@@ -67,7 +74,7 @@ const Login = ({navigation}) => {
                 <Text style={{color:'#858597',fontSize:14,marginTop:13}}>Forget Password?</Text>
               </Pressable>
             </View>
-            <Pressable onPress={login} style={styles.button}>
+            <Pressable onPress={()=>login()} style={styles.button}>
                 <Text style={{fontSize:16,fontWeight:'500',color:'#fff'}}>Log in</Text>
             </Pressable>
            

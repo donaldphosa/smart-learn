@@ -4,20 +4,20 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 
 
-const CourseComponents = ({courseName,coursePic,courseVideos,coursePrice,courseWriter}) =>{
+const CourseComponents = () =>{
     return(
       <Pressable onPress={()=>{}} style={styles.CourseContainer}>
         <View style={styles.imageContainer}>
-          <Image resizeMode='cover' style={styles.image} source={{uri:coursePic}}/>
+          {/* <Image resizeMode='cover' style={styles.image} source={{uri:coursePic}}/> */}
         </View>
           <View style={styles.courseDetails}>
-            <Text style={{color:'#1F1F39',fontSize:14,fontWeight:'700'}}>{courseName}</Text>
+            <Text style={{color:'#1F1F39',fontSize:14,fontWeight:'700'}}>React Native</Text>
             <View style={styles.writer}>
             <Ionicons name="person" size={12} color="#B8B8D2" />
-            <Text style={{color:'#B8B8D2',fontSize:14,fontWeight:'400',marginLeft:3}}>{courseWriter}</Text>
+            <Text style={{color:'#B8B8D2',fontSize:14,fontWeight:'400',marginLeft:3}}>phosa Donald</Text>
             </View>
             <View style={styles.priceContainer}>
-              <Text style={{color:'#3D5CFF',fontSize:16,fontWeight:'bold'}}>${coursePrice}</Text>
+              <Text style={{color:'#3D5CFF',fontSize:16,fontWeight:'bold'}}>$15</Text>
               <Text style={{backgroundColor:'#FFEBF0',color:'#FF6905',fontSize:14,marginLeft:5,padding:2,borderRadius:20}}>16 hours</Text>
             </View>
           </View>

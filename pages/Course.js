@@ -6,18 +6,41 @@ import { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setVideos } from '../store/slice';
+import { QuerySnapshot, collection } from 'firebase/firestore';
+import { db } from '../firebase/firebase.config';
+import { setCourses } from '../store/coursesReducer';
 
-const Course = ({navigation,data}) => {
+
+const Course = ({navigation}) => {
   const [enrolledCourse,setEnrolledCourses] = useState([])
   const [progress,setProgress] = useState(80)
-  const users = useSelector(state=>state.users)
+  
  
- useEffect(()=>{
-  setEnrolledCourses(data.filter(dat=>[...users[0]?.coursesEnrolledIds].toString().includes(dat.id.toString())))
-},[users])
+const user = useSelector(state=>state.auth.auth);
+
+console.log(user.email);
   
 const dispatch = useDispatch()
+
+
+const loadAllCourses = async()=>{
+
+  const querySnapshot = await getDocs(collection(db, "courses"));
+  let data = [];
+  QuerySnapshot.forEach((doc) => {
+    data.push({id:doc.id, ...doc.data()})
+  });
+
+  dispatch(setCourses(data))
+
+}
+
+useEffect(()=>{
+  loadAllCourses();
+},[])
+
+const schools = useSelector(State=>State.courses.courses);
+
   return (
   <SafeAreaProvider>
     <SafeAreaView>
@@ -30,8 +53,10 @@ const dispatch = useDispatch()
           </View>
         
          <SafeAreaView>
-         <ScrollView>
-          {enrolledCourse.length>0?enrolledCourse.map((course,index)=><PlanContainer navigation={navigation} dispatch={dispatch} key={index} {...course} progress={progress}/>):<NoEnrolledCourseModel/>}
+         <ScrollView>{
+            !schools?<NoEnrolledCourseModel/>:schools.map((school)=>{
+          return<PlanContainer school={school} navigation={navigation}/>
+         })}
          </ScrollView>
          </SafeAreaView>
         </View>
@@ -52,27 +77,26 @@ const NoEnrolledCourseModel = () =>{
   </View>
 }
 
-const PlanContainer = ({ progress,courseName,courseVideos,coursePrice,dispatch,navigation,id,courseLikes,identifier})=>{
+const PlanContainer = ({ navigation, school})=>{
   return<Pressable onPress={()=>{  
-    dispatch(setVideos({courseName, courseVideos,coursePrice,id,courseLikes,identifier}));
     navigation.navigate('CourseView')
   }}>
       <View style={styles.wrapper}>
         <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
           <View >
-            <Text style={{color:'#440687',fontSize:25,fontWeight:'600',marginBottom:10}}>{courseName}</Text>
-            <Text style={{color:'#1F1F39',fontSize:14,fontWeight:'800',marginBottom:10}}>1/{courseVideos.length} lessons</Text>
+            <Text style={{color:'#440687',fontSize:18,fontWeight:'600',marginBottom:5}}>{school.courseName}</Text>
+            <Text style={{color:'#1F1F39',fontSize:11,fontWeight:'600',marginBottom:5}}>1/{school.courseVideos?.length}</Text>
           </View>
           <View style={styles.vidIcon}>
-                <Ionicons name='play' size={26} color={'#FFFFFF'}/>
+                <Ionicons name='play' size={18} color={'#FFFFFF'}/>
             </View>
       </View>
       <View style={styles.track}>
       <LinearGradient 
         start={{x:0,y:1}} 
         end={{x:0.8,y:0.2}} 
-        style={[styles.bar,{width:`${progress}%`}]} 
-        colors={['#3D5CFF','#3D5CFF']}
+        style={[styles.bar,{width:`${100}%`}]} 
+        colors={['#3D5CFF','#DFF5FF'].reverse()}
         >
       </LinearGradient>
       </View>
@@ -104,21 +128,21 @@ const styles = StyleSheet.create({
     marginTop:5
   },
   wrapper:{
-    width:'100%',
-    height:110,
-    borderRadius:15,
+    width:'98%',
+    height:80,
+    borderRadius:5,
     shadowOpacity: 0.55,
-    elevation: 10,
+    elevation: 3,
     backgroundColor:'#ffffff',
-    marginVertical:5,
+    marginVertical:3,
     padding:10,
     shadowColor:'gray',
     
 },
 vidIcon:{
   backgroundColor:'#3D5CFF',
-  width:44,
-  height:44,
+  width:34,
+  height:34,
   borderRadius:100,
   alignItems:'center',
   justifyContent:'center'
@@ -126,7 +150,7 @@ vidIcon:{
 track:{
   width:'100%',
   backgroundColor:'#F4F7FD',
-  height:4,
+  height:3,
   marginTop:10,
   borderRadius:10,
   overflow:'hidden'
@@ -134,6 +158,6 @@ track:{
 bar:{
   height:'100%',
   borderRadius:10,
-  height:4
+  height:3
 },
 })

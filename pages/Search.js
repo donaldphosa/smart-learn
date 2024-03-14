@@ -4,11 +4,9 @@ import React, { useEffect } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { FlatGrid } from 'react-native-super-grid';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { setVideos } from '../store/slice';
 import SelectDropdown from 'react-native-select-dropdown'
 
-const Search = ({navigation,courseData}) => {
+const Search = ({navigation}) => {
   const [data,setData] = useState([{category:'Design',status:false},{category:'Painting',status:false},{category:'Coding',status:false},{category:'Music',status:false},{category:'Visual identity',status:false},{category:'Mathematics',status:false}])
   const [duration,setDuration] = useState([
     {time:'3-8',status:true},
@@ -22,46 +20,11 @@ const Search = ({navigation,courseData}) => {
   const [toValue,setToValue] = useState(1000)
   const [selectedCat,setSelectedCat]= useState([])
   const [results,setResults] = useState([])
-  const [info,setInfo] = useState(courseData)
+  const [info,setInfo] = useState([])
 const options = [100,500,1000,1500,2000,2500,3000]
 const optionsData = ['R 500','R 1000','R 1500','R 2000','R 2500','R3000']
 
-useEffect(()=>{ 
-  getCategories()
-return ()=>{
-  getCategories()
-}
-},[data])
 
-
-const getCategories = ()=>{
-  const temp = []
-  for(let i = 0;i<data.length;i++){
-    if(data[i].status === true){
-      temp.push(data[i].category)
-    }
-  }
-  setSelectedCat(temp)
-}
-
-const filterCourses = (cat) =>{
-  let filteredData1 = info.filter((item)=>{
-    if(cat.length===0){
-      return true
-    }
-    return cat.includes(item.category)
-  })
-  let filteredData2 = filteredData1.filter((info)=>{
-    return info.coursePrice >= initial&&info.coursePrice <= toValue
-  })
-  setResults(filteredData2);
-}
-
-  if(filter){
-    return(
-      <Results results={results} navigation={navigation} setFilter={setFilter}/>
-    );
-  }
   return (
     <SafeAreaProvider>
     <SafeAreaView>
@@ -177,7 +140,7 @@ const filterCourses = (cat) =>{
 export default Search
 
 
-const Results = ({setFilter,navigation,results}) =>{
+const Results = ({navigation}) =>{
 
   return (
   <SafeAreaProvider>
@@ -196,9 +159,7 @@ const Results = ({setFilter,navigation,results}) =>{
             </View> 
           <View style={{height:'60%',marginTop:10}}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {
-              results.map((result, index)=> <Courses key={index} {...result} navigation={navigation}/>)
-            }
+           
           </ScrollView>
         </View>       
         </View>
@@ -207,24 +168,23 @@ const Results = ({setFilter,navigation,results}) =>{
   )
 }
 
-const Courses = ({courseName,coursePic,coursePrice,courseWriter,navigation,courseVideos,id,courseLikes,identifier}) =>{
-  const dispatch = useDispatch()
+const Courses = ({navigation}) =>{
+  
   return(
     <Pressable onPress={()=>{
-      dispatch(setVideos({courseName, courseVideos,coursePrice,id,courseLikes,identifier}));
       navigation.navigate('CourseView')
     }} style={styles.CourseContainer}>
       <View style={styles.imageContainer}>
-        <Image resizeMode='cover' style={styles.image} source={{uri:coursePic}}/>
+        {/* <Image resizeMode='cover' style={styles.image} source={{uri:coursePic}}/> */}
       </View>
         <View style={styles.courseDetails}>
-          <Text style={{color:'#1F1F39',fontSize:14,fontWeight:'700'}}>{courseName}</Text>
+          <Text style={{color:'#1F1F39',fontSize:14,fontWeight:'700'}}>React Native</Text>
           <View style={styles.writer}>
           <Ionicons name="person" size={12} color="#B8B8D2" />
-          <Text style={{color:'#B8B8D2',fontSize:14,fontWeight:'400',marginLeft:3}}>{courseWriter}</Text>
+          <Text style={{color:'#B8B8D2',fontSize:14,fontWeight:'400',marginLeft:3}}>Phosa Donald</Text>
           </View>
           <View style={styles.priceContainer}>
-            <Text style={{color:'#3D5CFF',fontSize:16,fontWeight:'bold'}}>${coursePrice}</Text>
+            <Text style={{color:'#3D5CFF',fontSize:16,fontWeight:'bold'}}>$15.55</Text>
             <Text style={{backgroundColor:'#FFEBF0',color:'#FF6905',fontSize:14,marginLeft:5,padding:2,borderRadius:20}}>16 hours</Text>
           </View>
         </View>
