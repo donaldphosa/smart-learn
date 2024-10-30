@@ -1,22 +1,8 @@
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import React, { useState } from 'react';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { useSelector } from 'react-redux';
-import { get, getDatabase,onValue,ref } from 'firebase/database';
-import { app } from '../firebase/firebase.config';
-import { useEffect } from 'react';
-
+import React from 'react';
 
 const Message = () => {
-  const [current,setCurrent] = useState('messages')
-  const [friends,setFriends] = useState([])
-  const [notification,setNotification] = useState([2])
-  const user = useSelector(state=>state.users)
-  useEffect(()=>{
-    
-  },[])
-
   return (
     <SafeAreaProvider>
       <SafeAreaView>

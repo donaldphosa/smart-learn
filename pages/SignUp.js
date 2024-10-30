@@ -3,24 +3,13 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import CheckBox from 'react-native-check-box'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { app, auth, db } from '../firebase/firebase.config'
 import Spinner from 'react-native-loading-spinner-overlay';
-import { doc, setDoc, onSnapshot  } from "firebase/firestore"; 
-import { useDispatch } from 'react-redux';
-import { setUser } from '../store/authReducer';
+
 
 const SignUp = ( { navigation } ) =>
 {
-    const [ checked, setChecked ] = useState( true )
-    const [ email, setEmail ] = useState( '' )
     const [ password, setPassword ] = useState( '' )
-    const [ name, setName ] = useState( '' )
-    const [ visible, setVisible ] = useState( false )
-    const [ nameError, setNameError ] = useState( false )
-    const [ done, setDone ] = useState( false )
 
-    const dispatch = useDispatch();
 
     function validatePassword(password) {
         // Password should be at least 8 characters long
@@ -64,35 +53,15 @@ const SignUp = ( { navigation } ) =>
         if (!validatePassword(password)) {
            return;
         }
-        setVisible(true)
-        createUserWithEmailAndPassword(auth,email,password).then(async(userCredential)=>{
-            await setDoc(doc(db, "users", userCredential.user.email), {
-                name: name,
-                email: email,
-                EnrolledCourses: []
-              });
-
-              const unsub = onSnapshot(doc(db, "users", userCredential.user.email), (doc) => {
-                
-                doc.data()
-                dispatch(setUser(doc.data()));
-
-              });
-
-              setVisible(false)
-        }).catch((error)=>{
-            Alert.alert(error.message);
-            setVisible(false)
-        })
     }
 
     return (
 
         <SafeAreaProvider>
             <SafeAreaView>
-                <Spinner visible={visible} />
+                <Spinner visible={false} />
                 <View style={styles.container}>
-                    <Spinner visible={visible} />
+                    <Spinner visible={false} />
                     <Text style={styles.signupText}>Sign Up</Text>
                     <Text style={styles.detailsText}>Enter your details below & free sign up</Text>
                     <ScrollView style={styles.body}>
@@ -101,12 +70,10 @@ const SignUp = ( { navigation } ) =>
                             <Text style={{ color: '#858597' }}>username</Text>
                             <TextInput
                                 placeholderTextColor={'#1F1F39'}
-                                style={[ styles.inputField, { borderWidth: 1, borderColor: nameError ? 'red' : 'transparent' } ]}
+                                style={[ styles.inputField, { borderWidth: 1, borderColor: false ? 'red' : 'transparent' } ]}
                                 placeholder='Name'
-                                onChangeText={( text ) =>
+                                onChangeText={( ) =>
                                 {
-                                    setName( text )
-                                    setNameError( false )
                                 }}
 
                             />
@@ -118,7 +85,7 @@ const SignUp = ( { navigation } ) =>
                                 placeholderTextColor={'#1F1F39'}
                                 style={styles.inputField}
                                 placeholder='e.g email@gmail.com'
-                                onChangeText={( text ) => setEmail( text )}
+                                onChangeText={( ) => {}}
                             />
                         </View>
                         <View style={styles.textInput}>
@@ -129,7 +96,7 @@ const SignUp = ( { navigation } ) =>
                                     keyboardType='visible-password'
                                     placeholderTextColor={'#1F1F39'}
                                     placeholder='Password'
-                                    onChangeText={( text ) => setPassword( text )}
+                                    onChangeText={( text ) => {}}
                                 />
                                 <Ionicons name="eye-off" size={18} color="#1F1F39" />
 
@@ -137,18 +104,18 @@ const SignUp = ( { navigation } ) =>
                             <Pressable onPress={() =>
                             {
 
-                                signup();
-                            //    navigation.navigate("Tabs")
+                                
+                                navigation.navigate("Tabs")
                             }
                             } style={styles.button}>
                                 <Text style={{ fontSize: 16, fontWeight: '500' }}>Create account</Text>
                             </Pressable>
                             <View style={{ flexDirection: 'row', marginTop: 32 }}>
                                 <CheckBox
-                                    isChecked={checked}
-                                    checkBoxColor={!checked ? 'red' : '#B8B8D2'}
+                                    isChecked={true}
+                                    checkBoxColor={!true ? 'red' : '#B8B8D2'}
                                     style={styles.check}
-                                    onClick={() => { setChecked( prev => !prev ) }}
+                                    onClick={() => {  }}
                                 />
                                 <Text style={{ width: 253, color: '#B8B8D2' }}>By creating an account you have to agree
                                     with our terms & condications.
@@ -170,7 +137,7 @@ const SignUp = ( { navigation } ) =>
 
 export default SignUp
 
-const Model = ( { setDone, navigation } ) =>
+const Model = ( { navigation } ) =>
 {
     return (
         <View style={styles.modelContainer}>

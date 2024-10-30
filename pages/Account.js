@@ -2,11 +2,11 @@ import { Image, StyleSheet, Text, View, Pressable } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import React,{ useState } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
-import * as ImagePicker from 'expo-image-picker'
-import {signOut} from 'firebase/auth'
-import { auth, storageRef} from '../firebase/firebase.config';
+// import * as ImagePicker from 'expo-image-picker'
+// import {signOut} from 'firebase/auth'
+// import { auth, storageRef} from '../firebase/firebase.config';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 
 const Account = ({navigation}) => {
   const [image, setImage] = useState(null);
@@ -60,7 +60,7 @@ const Account = ({navigation}) => {
   return (
     <SafeAreaProvider>
       <SafeAreaView>
-      <Spinner visible={visible} color='#3D5CFF'/>
+      <Spinner visible={false} color='#3D5CFF'/>
         <View style={styles.container}>
           <Text style={{color:'#1F1F39',fontWeight:'bold',fontSize:24}}>Account</Text>
           <View style={styles.imageContainer}>

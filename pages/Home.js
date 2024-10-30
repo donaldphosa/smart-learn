@@ -1,36 +1,10 @@
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Pressable, Alert } from 'react-native'
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Pressable, } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import React, { useEffect, useState } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
-// import data from '../data'
-import { useDispatch, useSelector } from 'react-redux';
-import { collection, getDocs } from "firebase/firestore";
-import { setCourses } from '../store/coursesReducer';
-import { State } from 'react-native-gesture-handler';
-import { db } from '../firebase/firebase.config';
 
 
 const Home = ({ navigation }) => {
-  const [index, setIndex] = useState(1)
-  const dispatch = useDispatch();
-
-  const loadAllCourses = async()=>{
-
-    const querySnapshot = await getDocs(collection(db, "courses"));
-    let data = [];
-    querySnapshot.forEach((doc) => {
-      data.push({id:doc.id, ...doc.data()})
-    });
-
-    dispatch(setCourses(data))
-
-  }
-
-  useEffect(()=>{
-    loadAllCourses();
-  },[])
-
-const schools = useSelector(State=>State.courses.courses);
 
 
 
@@ -62,19 +36,19 @@ const schools = useSelector(State=>State.courses.courses);
               {/* ----------------------filters ------------------------------- */}
 
               <View style={styles.filters}>
-                <Pressable onPress={() => setIndex(1)}>
-                  <View style={[styles.filterCont, index === 1 ? { backgroundColor: '#3D5CFF' } : { backgroundColor: 'transparent' }]}>
-                    <Text style={[styles.text, index === 1 ? { color: '#ffffff' } : {}]}>All</Text>
+                <Pressable onPress={() => {}}>
+                  <View style={[styles.filterCont, true ? { backgroundColor: '#3D5CFF' } : { backgroundColor: 'transparent' }]}>
+                    <Text style={[styles.text, true ? { color: '#ffffff' } : {}]}>All</Text>
                   </View>
                 </Pressable>
-                <Pressable onPress={() => setIndex(2)}>
-                  <View style={[styles.filterCont, index === 2 ? { backgroundColor: '#3D5CFF' } : { backgroundColor: 'transparent' }]}>
-                    <Text style={[styles.text, index === 2 ? { color: '#ffffff' } : {}]}>Popular</Text>
+                <Pressable onPress={() => {}}>
+                  <View style={[styles.filterCont, false? { backgroundColor: '#3D5CFF' } : { backgroundColor: 'transparent' }]}>
+                    <Text style={[styles.text, false? { color: '#ffffff' } : {}]}>Popular</Text>
                   </View>
                 </Pressable>
-                <Pressable onPress={() => setIndex(3)}>
-                  <View style={[styles.filterCont, index === 3 ? { backgroundColor: '#3D5CFF' } : { backgroundColor: 'transparent' }]}>
-                    <Text style={[styles.text, index === 3 ? { color: '#ffffff' } : {}]}>New</Text>
+                <Pressable onPress={() => {}}>
+                  <View style={[styles.filterCont, false ? { backgroundColor: '#3D5CFF' } : { backgroundColor: 'transparent' }]}>
+                    <Text style={[styles.text, false ? { color: '#ffffff' } : {}]}>New</Text>
                   </View>
                 </Pressable>
               </View>
@@ -82,9 +56,7 @@ const schools = useSelector(State=>State.courses.courses);
               <View style={{ height: '60%', marginTop: 10 }}>
 
                 {
-                  schools?schools?.map((course, index)=>{
-                    return <Courses {...course} key={index} navigation={navigation}/>
-                  }):<NoEnrolledCourseModel/>
+                   (false ? <Courses  navigation={navigation}/>:<NoEnrolledCourseModel/>)
                 }
 
               </View>
@@ -114,22 +86,22 @@ const Card = () => {
   );
 }
 
-const Courses = ({ navigation,courseWriter, courseName,coursePrice,coursePic }) => {
+const Courses = ({ navigation }) => {
   return (
     <Pressable onPress={() => {
       navigation.navigate('CourseView')
     }} style={styles.CourseContainer}>
       <View style={styles.imageContainer}>
-        <Image resizeMode='cover' style={styles.image} source={{ uri: coursePic }} />
+        <Image resizeMode='cover' style={styles.image} source={require('../assets/images/Illustration4.png')} />
       </View>
       <View style={styles.courseDetails}>
-        <Text style={{ color: '#1F1F39', fontSize: 14, fontWeight: '700' }}>{courseName}</Text>
+        <Text style={{ color: '#1F1F39', fontSize: 14, fontWeight: '700' }}>Native</Text>
         <View style={styles.writer}>
           <Ionicons name="person" size={12} color="#B8B8D2" />
-          <Text style={{ color: '#B8B8D2', fontSize: 14, fontWeight: '400', marginLeft: 3 }}>{courseWriter}</Text>
+          <Text style={{ color: '#B8B8D2', fontSize: 14, fontWeight: '400', marginLeft: 3 }}>donald</Text>
         </View>
         <View style={styles.priceContainer}>
-          <Text style={{ color: '#3D5CFF', fontSize: 16, fontWeight: 'bold' }}>R{coursePrice}</Text>
+          <Text style={{ color: '#3D5CFF', fontSize: 16, fontWeight: 'bold' }}>R150.00</Text>
           <Text style={{ backgroundColor: '#FFEBF0', color: '#FF6905', fontSize: 14, marginLeft: 5, padding: 2, borderRadius: 20 }}>16 hours</Text>
         </View>
       </View>

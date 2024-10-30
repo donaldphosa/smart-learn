@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View, Image, TextInput, ScrollView } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import React, { useEffect } from 'react'
+import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { FlatGrid } from 'react-native-super-grid';
 import { useState } from 'react';

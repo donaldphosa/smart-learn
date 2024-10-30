@@ -1,11 +1,17 @@
-import { Provider } from "react-redux"
-import Navigation from "./pages/Navigation"
-import store from "./store/Store"
+import { StyleSheet, Text, View } from 'react-native';
+import Navigation from './pages/Navigation';
 
-export default App = ()=>{
-
-
-  return<Provider store={store}>
+export default function App() {
+  return (
     <Navigation />
-  </Provider>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

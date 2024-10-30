@@ -2,44 +2,13 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useState } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { QuerySnapshot, collection } from 'firebase/firestore';
-import { db } from '../firebase/firebase.config';
-import { setCourses } from '../store/coursesReducer';
+// import { LinearGradient } from 'expo-linear-gradient';
+
 
 
 const Course = ({navigation}) => {
-  const [enrolledCourse,setEnrolledCourses] = useState([])
-  const [progress,setProgress] = useState(80)
   
- 
-const user = useSelector(state=>state.auth.auth);
 
-console.log(user.email);
-  
-const dispatch = useDispatch()
-
-
-const loadAllCourses = async()=>{
-
-  const querySnapshot = await getDocs(collection(db, "courses"));
-  let data = [];
-  QuerySnapshot.forEach((doc) => {
-    data.push({id:doc.id, ...doc.data()})
-  });
-
-  dispatch(setCourses(data))
-
-}
-
-useEffect(()=>{
-  loadAllCourses();
-},[])
-
-const schools = useSelector(State=>State.courses.courses);
 
   return (
   <SafeAreaProvider>
@@ -54,9 +23,7 @@ const schools = useSelector(State=>State.courses.courses);
         
          <SafeAreaView>
          <ScrollView>{
-            !schools?<NoEnrolledCourseModel/>:schools.map((school)=>{
-          return<PlanContainer school={school} navigation={navigation}/>
-         })}
+           <NoEnrolledCourseModel/>}
          </ScrollView>
          </SafeAreaView>
         </View>
@@ -77,28 +44,28 @@ const NoEnrolledCourseModel = () =>{
   </View>
 }
 
-const PlanContainer = ({ navigation, school})=>{
+const PlanContainer = ({ navigation})=>{
   return<Pressable onPress={()=>{  
     navigation.navigate('CourseView')
   }}>
       <View style={styles.wrapper}>
         <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
           <View >
-            <Text style={{color:'#440687',fontSize:18,fontWeight:'600',marginBottom:5}}>{school.courseName}</Text>
-            <Text style={{color:'#1F1F39',fontSize:11,fontWeight:'600',marginBottom:5}}>1/{school.courseVideos?.length}</Text>
+            <Text style={{color:'#440687',fontSize:18,fontWeight:'600',marginBottom:5}}>{"TUT"}</Text>
+            <Text style={{color:'#1F1F39',fontSize:11,fontWeight:'600',marginBottom:5}}>1/15</Text>
           </View>
           <View style={styles.vidIcon}>
                 <Ionicons name='play' size={18} color={'#FFFFFF'}/>
             </View>
       </View>
       <View style={styles.track}>
-      <LinearGradient 
+      {/* <LinearGradient 
         start={{x:0,y:1}} 
         end={{x:0.8,y:0.2}} 
         style={[styles.bar,{width:`${100}%`}]} 
         colors={['#3D5CFF','#DFF5FF'].reverse()}
         >
-      </LinearGradient>
+      </LinearGradient> */}
       </View>
       </View>
   </Pressable>

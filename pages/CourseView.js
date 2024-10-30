@@ -4,63 +4,19 @@ import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
 import PurchaseModel from './PurchaseModel';
-import { useSelector } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
 import { useEffect } from 'react';
-import MediaMeta from 'react-native-media-meta'
 
 const CourseView = ({ }) => {
-    const users = useSelector(state => state.users)
-    const [vid, setVid] = useState('')
-    const [purchase, setPurchase] = useState(false)
-    const videosData = useSelector(state => state.courses)
-    const [liked, setLiked] = useState([])
-    const [visible, setVisible] = useState(false)
-    const [likes, setLikes] = useState(videosData.courseLikes)
 
-    useEffect(() => {
-        setLiked([])
-    }, [likes])
-    const duration = async () => {
-        MediaMeta.get(videosData.courseVideos[0].vidUrl)
-            .then((metadata) => console.log(metadata))
-            .catch(e => console.log(e))
-    }
-    duration()
-
-    const likeCourse = () => {
-        console.log(liked);
-        if (!liked) {
-            love()
-        } else if (liked) {
-            dislike()
-        }
-    }
-    const love = async () => {
-
-    }
-
-    const dislike = async () => {
-
-    }
-
-    const update = async () => {
-
-    }
-
-    if (purchase) {
-        return (
-            <PurchaseModel setPurchase={setPurchase} />
-        );
-    }
     return (
         <SafeAreaProvider>
             <SafeAreaView>
                 <View style={styles.container}>
-                    <Spinner visible={visible} />
+                    <Spinner visible={false} />
                     <View style={styles.upperPart}>
 
-                        <Text style={styles.bagde}>{videosData.courseName}</Text>
+                        <Text style={styles.bagde}>React Native</Text>
                         <Image source={require('../assets/images/IllustrationC.png')} />
 
 
@@ -68,7 +24,7 @@ const CourseView = ({ }) => {
                     <View style={styles.content}>
                         <View style={styles.header}>
                             <View>
-                                <Text style={styles.courseName}>{videosData.courseName}</Text>
+                                <Text style={styles.courseName}>Native</Text>
                                 <View style={{ flexDirection: 'row' }}>
                                     <Text style={{ color: '#858597', fontSize: 12 }}>6h 14min</Text>
                                     <Text style={{ color: '#858597', fontSize: 12 }}> . 24 Lessons</Text>

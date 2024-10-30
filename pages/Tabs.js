@@ -6,14 +6,11 @@ import Account from './Account'
 import Message from './Message'
 import Course from './Course'
 import { StyleSheet, Text, View, Pressable } from 'react-native';
-import { useSelector } from 'react-redux';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebase/firebase.config';
+
 
 
 
 const Tabs = ({navigation,setMessages,setChatId}) => {
-  const users = useSelector(state=>state.users)
   const [focused,setFocused] = useState('home')
 
 useEffect(()=>{
@@ -21,35 +18,19 @@ useEffect(()=>{
 },[])
 
 
-const courseRef = collection(db,'courses')
-const [data,setData] = useState([])
-useEffect(()=>{
-  getCourses()
-},[])
-
-const getCourses = async()=>{
-const documents =await getDocs(courseRef).catch((error)=>{
-  Alert.alert(error)
-})
-const list = documents.docs.map((item)=>{
-return {...item.data(),identifier:item.id}
-})
-setData(list)
-}
-
   return (
     <View style={styles.container}>
       {
-        focused==='home'&&<Home data={data}  navigation={navigation}/>
+        focused==='home'&&<Home  navigation={navigation}/>
       }
       {
-         focused==='course'&&<Course data={data} navigation={navigation}/>
+         focused==='course'&&<Course navigation={navigation}/>
       }
       {
-        focused==='search'&&<Search courseData={data} navigation={navigation}/>
+        focused==='search'&&<Search navigation={navigation}/>
       }
       {
-        focused==='message'&&<Message setChatId={setChatId} setMessages={setMessages} navigation={navigation}/>
+        focused==='message'&&<Message navigation={navigation}/>
       }
       {
          focused==='account'&&<Account navigation={navigation}/>

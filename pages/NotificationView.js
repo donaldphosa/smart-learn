@@ -4,27 +4,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 
 import React from 'react'
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { getDatabase, ref, update } from 'firebase/database';
-import { app } from '../firebase/firebase.config';
   
 
 
-const NotificationView = ({navigation,message,chatId}) => {
- const [text,setText] = useState()
- const user = useSelector(state=>state.users)
- const onSend = async()=>{
-  const database = getDatabase(app)
+const NotificationView = ({navigation}) => {
 
-  update(ref(database,`chatrooms/${chatId}`),{
-  messages: [ ...message,
-    {own:user[0].name,
-    text:text,
-    createdAt: new Date()}]
-  })
-  setText()
- }
   return (
     <SafeAreaProvider>
         <SafeAreaView>
@@ -36,12 +20,12 @@ const NotificationView = ({navigation,message,chatId}) => {
                   <Text style={styles.headText}>Donald</Text>
               </View> 
               <ScrollView showsVerticalScrollIndicator={false}>
-                {message?.map((message,index)=><MessageBody {...message} key={index} user={user} messageOrigin={message.own}/>)}
+                {/* {message?.map((message,index)=><MessageBody {...message} key={index} user={user} messageOrigin={message.own}/>)} */}
               </ScrollView>
               <View>
                 <View style={styles.sendField}>
-                  <TextInput placeholder='Enter Message' value={text} onChangeText={msg=>setText(msg)} multiline={true} style={styles.textInput} />
-                  <Pressable onPress={()=>onSend()}>
+                  <TextInput placeholder='Enter Message'  multiline={true} style={styles.textInput} />
+                  <Pressable onPress={()=>{}}>
                     <Ionicons name='send' size={24} color='#3D5CFF'/>
                   </Pressable>
                 </View>
@@ -54,19 +38,19 @@ const NotificationView = ({navigation,message,chatId}) => {
 
 export default NotificationView
 
-const MessageBody = ({messageOrigin,user,text,createdAt}) =>{
+const MessageBody = () =>{
  
 
-  var myDate = new Date(createdAt).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+  var myDate = new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
   let index = myDate.lastIndexOf(':')
   let time = myDate.substring(0,index)
  
   return(
-    <View style={[styles.message,{flexDirection:messageOrigin===user[0].name?'row':'row-reverse'}]}>
+    <View style={[styles.message,{flexDirection:true?'row':'row-reverse'}]}>
       <View style={styles.iconCont}>
         <Ionicons name='person' size={18} color={'#ccc'}/>
       </View>
-      <View style={[styles.textMessageConatiner,{backgroundColor:messageOrigin!==user[0].name?'#858597':'#ccc'}]}>
+      <View style={[styles.textMessageConatiner,{backgroundColor:true?'#858597':'#ccc'}]}>
         <Text style={styles.textMessage}>{text}</Text>
       </View>
       <View style={{height:'100%'}}>

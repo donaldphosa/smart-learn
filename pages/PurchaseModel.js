@@ -4,7 +4,7 @@ import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 
-const PurchaseModel = ({setPurchase}) => {
+const PurchaseModel = () => {
   return (
     <SafeAreaProvider>
         <SafeAreaView>
@@ -16,7 +16,7 @@ const PurchaseModel = ({setPurchase}) => {
                 </View>
                 <Text style={{color:'#1F1F39',fontSize:16,fontWeight:'600',marginVertical:20}}>Successful purchase</Text>
                 
-                <Pressable onPress={()=>setPurchase(false)} style={styles.doneButton}>
+                <Pressable onPress={()=>{}} style={styles.doneButton}>
                     <Text style={{color:'#ffffff',fontSize:16,fontWeight:'600'}}>start learning</Text>
                 </Pressable>
             </View>
